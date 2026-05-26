@@ -32,15 +32,17 @@ function MarketCard({ market, contract, account }) {
 
   async function bet(isYes) {
     if (!contract || !account) return alert("Connect wallet first!");
+    const amt = parseFloat(betAmount);
+    if (!betAmount || isNaN(amt) || amt <= 0) return alert("Enter a valid bet amount!");
     setLoading(true);
     try {
       const tx = await contract.placeBet(market.id, isYes, {
-        value: ethers.parseEther(betAmount)
+        value: ethers.parseEther(String(amt))
       });
       await tx.wait();
-      alert("Bet placed!");
+      alert("Bet placed! 🦁");
     } catch (e) {
-      alert("Error: " + e.message);
+      alert("Error: " + (e.reason || e.message));
     }
     setLoading(false);
   }
@@ -51,21 +53,24 @@ function MarketCard({ market, contract, account }) {
     try {
       const tx = await contract.claimWinnings(market.id);
       await tx.wait();
-      alert("Winnings claimed!");
+      alert("Winnings claimed! 🎉");
     } catch (e) {
-      alert("Error: " + e.message);
+      alert("Error: " + (e.reason || e.message));
     }
     setLoading(false);
   }
 
+  const outcomeLabel =
+    market.outcome === 1n ? "✅ YES WON" :
+    market.outcome === 2n ? "❌ NO WON" :
+    "CANCELLED";
+
   return (
-    <div className="market-card">
+    <div className={`market-card ${isOpen ? "open" : ""} ${market.settled ? "settled" : ""}`}>
       <div className="market-header">
-        <div>
-          <div className="match-id">{market.matchId.replace(/_/g, " ")}</div>
-          {isOpen && <div className="timer">⏱ {timeLeft}</div>}
-          {!isOpen && !market.settled && <div className="timer closed">Closed</div>}
-          {market.settled && <div className="timer settled">✓ Settled · {market.outcome === 1n ? "YES won" : market.outcome === 2n ? "NO won" : "Cancelled"}</div>}
+        <div className="match-id">⚽ {market.matchId.replace(/_/g, " ")}</div>
+        <div className={`market-status ${isOpen ? "status-open" : market.settled ? "status-settled" : "status-closed"}`}>
+          {isOpen ? `⏱ ${timeLeft}` : market.settled ? outcomeLabel : "CLOSED"}
         </div>
       </div>
       <p className="question">{market.question}</p>
@@ -73,35 +78,50 @@ function MarketCard({ market, contract, account }) {
         <div className="pool-fill-yes" style={{ width: yesPct + "%" }} />
       </div>
       <div className="pool-labels">
-        <span>YES · {yesPool.toFixed(3)} OKB</span>
-        <span>NO · {noPool.toFixed(3)} OKB</span>
+        <span className="label-yes">YES {yesPct}% · {yesPool.toFixed(3)} OKB</span>
+        <span className="label-no">NO {100 - yesPct}% · {noPool.toFixed(3)} OKB</span>
       </div>
       {isOpen && (
         <div className="bet-section">
-          <input
-            type="number"
-            value={betAmount}
-            onChange={e => setBetAmount(e.target.value)}
-            min="0.001"
-            step="0.001"
-            className="bet-input"
-          />
-          <span className="bet-label">OKB</span>
+          <div className="quick-amounts">
+            {[0.01, 0.05, 0.1, 0.5].map(a => (
+              <button
+                key={a}
+                className={`quick-amt ${betAmount === String(a) ? "selected" : ""}`}
+                onClick={() => setBetAmount(String(a))}
+              >{a}</button>
+            ))}
+          </div>
+          <div className="bet-row">
+            <input
+              type="number"
+              value={betAmount}
+              onChange={e => setBetAmount(e.target.value)}
+              min="0.001"
+              step="0.001"
+              className="bet-input"
+              placeholder="OKB"
+            />
+            <span className="bet-label">OKB</span>
+          </div>
           <div className="bet-buttons">
             <button className="btn-yes" onClick={() => bet(true)} disabled={loading}>
-              {loading ? "..." : "YES"}
+              {loading ? "..." : "✅ YES"}
             </button>
             <button className="btn-no" onClick={() => bet(false)} disabled={loading}>
-              {loading ? "..." : "NO"}
+              {loading ? "..." : "❌ NO"}
             </button>
           </div>
         </div>
       )}
       {market.settled && market.outcome !== 3n && (
         <button className="btn-claim" onClick={claim} disabled={loading}>
-          {loading ? "Claiming..." : "Claim winnings"}
+          {loading ? "Claiming..." : "🏆 Claim Winnings"}
         </button>
       )}
+      <div className="market-footer">
+        <span className="vol-label">Vol: {totalPool.toFixed(3)} OKB</span>
+      </div>
     </div>
   );
 }
@@ -111,6 +131,7 @@ export default function App() {
   const [contract, setContract] = useState(null);
   const [markets, setMarkets] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState("auto"); // auto | open | settled
 
   async function connectWallet() {
     if (!window.ethereum) return alert("Install MetaMask!");
@@ -142,6 +163,35 @@ export default function App() {
     setLoading(false);
   }
 
+  // ─── SMART FILTER LOGIC ───────────────────────────────────────────────
+  // 1. ALWAYS hide cancelled markets (settled + outcome === 3n)
+  // 2. Auto mode:
+  //    - If open/live markets exist → show only those
+  //    - If none → show recently settled (non-cancelled) markets
+  // 3. Manual filters work independently
+  const now = Date.now() / 1000;
+  const nonCancelled = markets.filter(m => !(m.settled && m.outcome === 3n));
+  const openMarkets = nonCancelled.filter(m => !m.settled && Number(m.closesAt) > now);
+  const settledMarkets = nonCancelled.filter(m => m.settled);
+
+  let displayed = [];
+  let sectionLabel = "";
+
+  if (filter === "open") {
+    displayed = openMarkets;
+  } else if (filter === "settled") {
+    displayed = settledMarkets;
+  } else {
+    // AUTO: live first, fall back to recent settled
+    if (openMarkets.length > 0) {
+      displayed = openMarkets;
+      sectionLabel = "🔴 LIVE MARKETS";
+    } else if (settledMarkets.length > 0) {
+      displayed = settledMarkets.slice(0, 12);
+      sectionLabel = "🕐 RECENT MATCHES — No live matches right now";
+    }
+  }
+
   const short = account ? account.slice(0, 6) + "..." + account.slice(-4) : null;
 
   return (
@@ -149,7 +199,7 @@ export default function App() {
       <header className="header">
         <div className="logo">ROAR<span>.</span></div>
         <div className="header-right">
-          {markets.length > 0 && <span className="live-badge">● LIVE</span>}
+          {openMarkets.length > 0 && <span className="live-badge">● LIVE</span>}
           {!account ? (
             <button className="connect-btn" onClick={connectWallet}>Connect wallet</button>
           ) : (
@@ -159,9 +209,18 @@ export default function App() {
       </header>
 
       <div className="stats-bar">
-        <div className="stat"><div className="stat-label">Markets</div><div className="stat-value">{markets.length}</div></div>
-        <div className="stat"><div className="stat-label">Open</div><div className="stat-value">{markets.filter(m => !m.settled).length}</div></div>
-        <div className="stat"><div className="stat-label">Settled</div><div className="stat-value">{markets.filter(m => m.settled).length}</div></div>
+        <div className="stat">
+          <div className="stat-label">Live</div>
+          <div className="stat-value">{openMarkets.length}</div>
+        </div>
+        <div className="stat">
+          <div className="stat-label">Settled</div>
+          <div className="stat-value">{settledMarkets.length}</div>
+        </div>
+        <div className="stat">
+          <div className="stat-label">Total</div>
+          <div className="stat-value">{nonCancelled.length}</div>
+        </div>
       </div>
 
       <main className="main">
@@ -173,18 +232,55 @@ export default function App() {
             <button className="connect-btn-lg" onClick={connectWallet}>Connect wallet to start</button>
           </div>
         )}
+
         {account && loading && <div className="loading">Loading markets...</div>}
-        {account && !loading && markets.length === 0 && (
-          <div className="empty-state">
-            <p>No markets yet. The AI agent will create them when matches start!</p>
-            <button className="refresh-btn" onClick={() => loadMarkets()}>Refresh</button>
-          </div>
-        )}
-        {account && markets.map((m, i) => (
-          <MarketCard key={i} market={m} contract={contract} account={account} />
-        ))}
-        {account && markets.length > 0 && (
-          <button className="refresh-btn" onClick={() => loadMarkets()}>Refresh markets</button>
+
+        {account && !loading && (
+          <>
+            {/* Filter buttons */}
+            <div className="filter-bar">
+              <button
+                className={`filter-btn ${filter === "auto" ? "active" : ""}`}
+                onClick={() => setFilter("auto")}
+              >🔴 Live</button>
+              <button
+                className={`filter-btn ${filter === "open" ? "active" : ""}`}
+                onClick={() => setFilter("open")}
+              >🟢 Open</button>
+              <button
+                className={`filter-btn ${filter === "settled" ? "active" : ""}`}
+                onClick={() => setFilter("settled")}
+              >✅ Settled</button>
+            </div>
+
+            {/* Section label */}
+            {sectionLabel && filter === "auto" && (
+              <div className="section-label">{sectionLabel}</div>
+            )}
+
+            {/* Markets */}
+            {displayed.length === 0 ? (
+              <div className="empty-state">
+                <p>
+                  {filter === "open"
+                    ? "No live markets right now. Markets appear automatically when matches kick off."
+                    : filter === "settled"
+                    ? "No settled markets yet."
+                    : "No markets available right now. Check back when matches start!"}
+                </p>
+                <button className="refresh-btn" onClick={() => loadMarkets()}>🔄 Refresh</button>
+              </div>
+            ) : (
+              <>
+                <div className="markets-grid">
+                  {displayed.map((m, i) => (
+                    <MarketCard key={i} market={m} contract={contract} account={account} />
+                  ))}
+                </div>
+                <button className="refresh-btn" onClick={() => loadMarkets()}>🔄 Refresh Markets</button>
+              </>
+            )}
+          </>
         )}
       </main>
 
