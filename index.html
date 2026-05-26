@@ -665,12 +665,15 @@ async function loadMarketsFromChain(){
     setLiveStatus('error','Chain fetch failed — retrying…');
     const c=document.getElementById("marketsContainer");
     if(c&&c.querySelector('.loading')){
-      c.innerHTML='<div class="empty-state"><h3>Could Not Load Markets</h3><p style="color:var(--muted);font-size:13px;">'+escapeHtml(e.message)+'</p><button class="refresh-btn" onclick="loadMarketsFromChain()">Try Again</button></div>';
+      c.innerHTML='<div class="empty-state"><h3>Could Not Load Markets</h3><p style="color:var(--muted);font-size:13px;">'+escapeHtml(e.message)+'</p><button class="refresh-btn" onclick="loadMarkets()">Try Again</button></div>';
     }
   }
   pollTimeout=setTimeout(loadMarketsFromChain,CONTRACT_POLL_MS);
 }
-function loadMarkets(){loadMarketsFromChain();}
+function loadMarkets(){
+  if(contract){loadMarketsFromChain();}
+  else{showToast("Connect wallet first to refresh!","error");}
+}
 
 function updateStatsBar(){
   const now=Date.now()/1000;
