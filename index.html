@@ -750,7 +750,7 @@ function selectQuickBet(marketId,amount){
 
 function shareMarket(marketId){
   const m=marketsById.get(String(marketId));if(!m)return;
-  const text='🦁 I just bet on ROAR!\n\n"'+m.question+'"\n\n⚡ '+m.matchId.replace(/_/g,' ')+' — live on @XLayerOfficial\n\nFeel the Match. Own the Moment. 🔥\n\n#ROAR #XCupHackathon #WorldCup2026';
+  const text='🦁 I just bet on @RoarMarkets\n\n"'+m.question+'"\n\n⚡ '+m.matchId.replace(/_/g,' ')+' — live on @XLayerOfficial\n\nFeel the Match. Own the Moment. 🔥\n\nLink: https://roar-frontend-drab.vercel.app/\n\n#ROAR #XCupHackathon #WorldCup2026';
   window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank');
 }
 
@@ -855,7 +855,7 @@ function renderMarkets(){
   }
 
   if(filtered.length===0){
-    c.innerHTML='<div class="empty-state"><h3>No Markets Available</h3><p>Live markets will appear here when matches kick off.</p><button class="refresh-btn" onclick="loadMarketsFromChain()">🔄 Refresh</button></div>';
+    c.innerHTML='<div class="empty-state"><h3>No Markets Available</h3><p>Live markets will appear here when matches kick off.</p><button class="refresh-btn" onclick="if(contract){loadMarketsFromChain();}else{renderMarkets();}">🔄 Refresh</button></div>';
     return;
   }
 
@@ -864,7 +864,7 @@ function renderMarkets(){
     :'';
 
   c.innerHTML=labelHtml+'<div class="markets-grid">'+filtered.map(renderMarket).join('')+'</div>'
-    +'<button class="refresh-btn" onclick="loadMarketsFromChain()">🔄 Refresh Now</button>';
+    +'<button class="refresh-btn" onclick="if(contract){loadMarketsFromChain();}else{renderMarkets();}">🔄 Refresh Now</button>';
   startTimers();
 }
 
