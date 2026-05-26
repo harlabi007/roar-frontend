@@ -671,8 +671,15 @@ async function loadMarketsFromChain(){
   pollTimeout=setTimeout(loadMarketsFromChain,CONTRACT_POLL_MS);
 }
 function loadMarkets(){
-  if(contract){loadMarketsFromChain();}
-  else{showToast("Connect wallet first to refresh!","error");}
+  showToast("Refreshing markets... ⏳");
+  if(contract){
+    loadMarketsFromChain();
+  } else if(allMarkets.length>0){
+    renderMarkets();
+    showToast("Showing cached markets","success");
+  } else {
+    showToast("Connect wallet to load markets","error");
+  }
 }
 
 function updateStatsBar(){
@@ -867,7 +874,7 @@ function renderMarkets(){
     :'';
 
   c.innerHTML=labelHtml+'<div class="markets-grid">'+filtered.map(renderMarket).join('')+'</div>'
-    +'<button class="refresh-btn" onclick="if(contract){loadMarketsFromChain();}else{renderMarkets();}">🔄 Refresh Now</button>';
+    +'<button class="refresh-btn" onclick="if(contract){loadMarkets();}else{renderMarkets();}">🔄 Refresh Now</button>';
   startTimers();
 }
 
