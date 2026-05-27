@@ -61,7 +61,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2
 .filter-btn.active{background:rgba(232,255,71,0.1);color:var(--accent);border-color:rgba(232,255,71,0.3);}
 .filter-btn:hover:not(.active){border-color:var(--border2);}
 .filter-spacer{flex:1;}
-/* Section label shown above settled markets when no live matches */
 .section-label{font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.75rem;display:flex;align-items:center;gap:6px;}
 .markets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem;margin-bottom:1.5rem;}
 .market-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.25rem;transition:border-color 0.3s,box-shadow 0.3s,transform 0.2s;position:relative;overflow:hidden;}
@@ -218,12 +217,22 @@ footer a{color:var(--accent);text-decoration:none;}
 .tier-silver{background:rgba(192,192,192,0.15);color:#c0c0c0;border:1px solid rgba(192,192,192,0.3);}
 .tier-gold{background:rgba(255,215,0,0.15);color:#ffd700;border:1px solid rgba(255,215,0,0.3);}
 .tier-diamond{background:rgba(71,184,255,0.15);color:var(--blue);border:1px solid rgba(71,184,255,0.3);}
-.nft-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:var(--bg2);border:1px solid rgba(232,255,71,0.4);border-radius:16px;padding:2rem;text-align:center;z-index:500;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);width:300px;box-shadow:0 0 60px rgba(232,255,71,0.2);}
+.nft-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:var(--bg2);border:1px solid rgba(232,255,71,0.4);border-radius:16px;padding:2rem;text-align:center;z-index:500;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);width:320px;box-shadow:0 0 60px rgba(232,255,71,0.2);}
 .nft-popup.show{transform:translate(-50%,-50%) scale(1);}
 .nft-emoji{font-size:4rem;margin-bottom:0.5rem;}
 .nft-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--accent);margin-bottom:0.25rem;}
-.nft-desc{font-size:13px;color:var(--muted2);margin-bottom:1rem;}
-.nft-close{background:var(--accent);color:#000;border:none;border-radius:8px;padding:8px 20px;font-weight:700;cursor:pointer;font-size:13px;}
+.nft-desc{font-size:13px;color:var(--muted2);margin-bottom:0.75rem;}
+/* ── NEW: streak row inside popup ── */
+.nft-streak-row{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem;padding:10px;background:var(--bg3);border-radius:10px;border:1px solid var(--border);}
+.nft-streak-stat{text-align:center;}
+.nft-streak-val{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--accent);letter-spacing:2px;line-height:1;}
+.nft-streak-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+/* ── NEW: roar score floating badge in nav ── */
+.roar-score-badge{display:flex;align-items:center;gap:5px;background:rgba(232,255,71,0.08);border:1px solid rgba(232,255,71,0.2);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;transition:all 0.2s;}
+.roar-score-badge:hover{background:rgba(232,255,71,0.15);}
+.roar-score-badge .badge-val{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;}
+@keyframes scoreBump{0%{transform:scale(1);}40%{transform:scale(1.3);}100%{transform:scale(1);}}
+.roar-score-badge.bump{animation:scoreBump 0.4s ease;}
 .profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(4px);}
 .profile-overlay.show{opacity:1;pointer-events:all;}
 .profile-panel{position:fixed;top:0;right:0;width:360px;height:100vh;background:var(--bg2);border-left:1px solid var(--border2);z-index:301;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;display:flex;flex-direction:column;}
@@ -265,6 +274,10 @@ footer a{color:var(--accent);text-decoration:none;}
   <div class="logo">ROAR</div>
   <div class="nav-right">
     <div class="network-badge">X LAYER TESTNET</div>
+    <!-- LIVE ROAR SCORE BADGE IN NAV -->
+    <div class="roar-score-badge" id="navRoarBadge" onclick="openProfile()" style="display:none;">
+      🦁 <span class="badge-val" id="navRoarVal">0</span> ROAR
+    </div>
     <button class="notification-btn" id="notifBtn" onclick="toggleNotifications()" style="background:var(--bg3);color:var(--muted2);border:1px solid var(--border);border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;">🔔 Alerts</button>
     <button class="btn-connect" id="connectBtn" onclick="connectWallet()">Connect Wallet</button>
   </div>
@@ -383,10 +396,26 @@ footer a{color:var(--accent);text-decoration:none;}
   </div>
 </div>
 
+<!-- NFT / Achievement Popup — now includes streak stats row -->
 <div class="nft-popup" id="nftPopup">
   <div class="nft-emoji" id="nftEmoji">🏆</div>
   <div class="nft-title" id="nftTitle">Achievement Unlocked!</div>
   <div class="nft-desc" id="nftDesc">You earned a ROAR NFT</div>
+  <!-- Streak stats shown after first bet -->
+  <div class="nft-streak-row" id="nftStreakRow" style="display:none;">
+    <div class="nft-streak-stat">
+      <div class="nft-streak-val" id="nftStatBets">0</div>
+      <div class="nft-streak-label">Total Bets</div>
+    </div>
+    <div class="nft-streak-stat">
+      <div class="nft-streak-val" id="nftStatStreak">0</div>
+      <div class="nft-streak-label">🔥 Streak</div>
+    </div>
+    <div class="nft-streak-stat">
+      <div class="nft-streak-val" id="nftStatScore">0</div>
+      <div class="nft-streak-label">ROAR Score</div>
+    </div>
+  </div>
   <button class="nft-close" onclick="closeNFTPopup()">Awesome! 🦁</button>
 </div>
 
@@ -632,7 +661,11 @@ async function connectWallet(){
     const btn=document.getElementById("connectBtn");
     btn.textContent=userAddress.slice(0,6)+"..."+userAddress.slice(-4);
     btn.classList.add("connected");btn.onclick=openProfile;
-    loadUserBetCount();showToast("Wallet connected! 🦁");
+    loadUserBetCount();
+    // Show ROAR score badge in nav
+    document.getElementById('navRoarBadge').style.display='flex';
+    updateNavROARScore();
+    showToast("Wallet connected! 🦁");
     seedFeed();startFeedSimulation();startAllRefreshLoops();
   }catch(e){showToast("Error: "+e.message,"error");}
 }
@@ -672,20 +705,14 @@ async function loadMarketsFromChain(){
 }
 function loadMarkets(){
   showToast("Refreshing markets... ⏳");
-  if(contract){
-    loadMarketsFromChain();
-  } else if(allMarkets.length>0){
-    renderMarkets();
-    showToast("Showing cached markets","success");
-  } else {
-    showToast("Connect wallet to load markets","error");
-  }
+  if(contract){loadMarketsFromChain();}
+  else if(allMarkets.length>0){renderMarkets();showToast("Showing cached markets","success");}
+  else{showToast("Connect wallet to load markets","error");}
 }
 
 function updateStatsBar(){
   const now=Date.now()/1000;
   const open=allMarkets.filter(m=>!m.settled&&Number(m.closesAt)>now);
-  // Count settled that are NOT cancelled (outcome 3)
   const settled=allMarkets.filter(m=>m.settled&&m.outcome!==3);
   let totalVol=BigInt(0);
   allMarkets.forEach(m=>{totalVol+=BigInt(m.totalYes)+BigInt(m.totalNo);});
@@ -736,8 +763,7 @@ function sendChat(marketId){
 function filterMarkets(type,btn){
   currentFilter=type;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderMarkets();
+  btn.classList.add('active');renderMarkets();
 }
 function switchTab(tab,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
@@ -826,53 +852,24 @@ function renderMarket(m){
     +'</div>';
 }
 
-// ─── SMART RENDER MARKETS ─────────────────────────────────────────────────────
-// Rules:
-// 1. CANCELLED markets (settled + outcome===3) are ALWAYS hidden
-// 2. Auto/default view:
-//    - If OPEN markets exist → show only open (live) markets
-//    - If no open markets → show recently settled (non-cancelled) markets
-// 3. Manual filters (Open, Settled) work independently
 function renderMarkets(){
   const now=Date.now()/1000;
   const c=document.getElementById("marketsContainer");
-
-  // Always exclude cancelled markets
   const nonCancelled=allMarkets.filter(m=>!(m.settled&&m.outcome===3));
-
   const openMarkets=nonCancelled.filter(m=>!m.settled&&Number(m.closesAt)>now);
   const settledMarkets=nonCancelled.filter(m=>m.settled);
-
-  let filtered=[];
-  let sectionLabel='';
-
-  if(currentFilter==='open'){
-    filtered=openMarkets;
-    sectionLabel='';
-  } else if(currentFilter==='settled'){
-    filtered=settledMarkets;
-    sectionLabel='';
-  } else {
-    // AUTO mode: live first, fall back to recent settled
-    if(openMarkets.length>0){
-      filtered=openMarkets;
-      sectionLabel='🔴 LIVE MARKETS';
-    } else if(settledMarkets.length>0){
-      // Show most recent settled matches (last 12)
-      filtered=settledMarkets.slice(0,12);
-      sectionLabel='🕐 RECENT MATCHES — No live matches right now';
-    }
+  let filtered=[],sectionLabel='';
+  if(currentFilter==='open'){filtered=openMarkets;}
+  else if(currentFilter==='settled'){filtered=settledMarkets;}
+  else{
+    if(openMarkets.length>0){filtered=openMarkets;sectionLabel='🔴 LIVE MARKETS';}
+    else if(settledMarkets.length>0){filtered=settledMarkets.slice(0,12);sectionLabel='🕐 RECENT MATCHES — No live matches right now';}
   }
-
   if(filtered.length===0){
     c.innerHTML='<div class="empty-state"><h3>No Markets Available</h3><p>Live markets will appear here when matches kick off.</p><button class="refresh-btn" onclick="if(contract){loadMarketsFromChain();}else{renderMarkets();}">🔄 Refresh</button></div>';
     return;
   }
-
-  const labelHtml=sectionLabel
-    ?'<div class="section-label">'+sectionLabel+'</div>'
-    :'';
-
+  const labelHtml=sectionLabel?'<div class="section-label">'+sectionLabel+'</div>':'';
   c.innerHTML=labelHtml+'<div class="markets-grid">'+filtered.map(renderMarket).join('')+'</div>'
     +'<button class="refresh-btn" onclick="if(contract){loadMarkets();}else{renderMarkets();}">🔄 Refresh Now</button>';
   startTimers();
@@ -888,6 +885,53 @@ function renderLeaderboard(){
     +'<div class="lb-bets">'+userBetCount+' bets</div><div class="lb-winnings">— OKB</div></div>';
 }
 
+// ─── FIX 1: updateNavROARScore — updates the live badge in the nav bar ───────
+function updateNavROARScore(){
+  if(!userAddress)return;
+  const streak=userStreaks[userAddress]||0;
+  const score=calcROARScore(userBetCount,totalWins,streak);
+  const badge=document.getElementById('navRoarBadge');
+  const val=document.getElementById('navRoarVal');
+  if(!badge||!val)return;
+  val.textContent=score;
+  // Bump animation
+  badge.classList.remove('bump');
+  void badge.offsetWidth;
+  badge.classList.add('bump');
+}
+
+// ─── FIX 2: triggerPostBetUpdate — called after every bet to update score ────
+function triggerPostBetUpdate(isFirstBet){
+  const streak=userStreaks[userAddress]||0;
+  const score=calcROARScore(userBetCount,totalWins,streak);
+  const tier=getROARTier(score);
+
+  // Update nav badge
+  updateNavROARScore();
+
+  // Update profile panel if it's open
+  if(document.getElementById('profilePanel').classList.contains('show')){
+    updateProfilePanel();
+  }
+
+  // FIX 3: Show first-bet popup with streak stats immediately
+  if(isFirstBet){
+    const nft=NFT_ACHIEVEMENTS.find(n=>n.id==='first_bet');
+    if(nft){
+      mintedNFTs.add('first_bet');
+      // Populate the streak row with live data
+      document.getElementById('nftStatBets').textContent=userBetCount;
+      document.getElementById('nftStatStreak').textContent=streak;
+      document.getElementById('nftStatScore').textContent=score;
+      document.getElementById('nftStreakRow').style.display='flex';
+      showNFTPopup(nft);
+    }
+  } else {
+    // For subsequent bets, check other achievements
+    checkNFTs(userBetCount,totalWins,streak);
+  }
+}
+
 async function placeBet(marketId,isYes){
   if(!signer){showToast("Connect wallet first!","error");return;}
   const input=document.getElementById('amt-'+marketId);
@@ -897,11 +941,16 @@ async function placeBet(marketId,isYes){
   try{
     showToast("Placing bet... ⏳");
     const tx=await contract.placeBet(marketId,isYes,{value:ethers.parseEther(String(amt)),gasPrice:ethers.parseUnits("1","gwei")});
-    await tx.wait();playBetSound();incrementUserBetCount();
+    await tx.wait();
+    playBetSound();
+    const wasFirstBet = (userBetCount === 0); // check BEFORE incrementing
+    incrementUserBetCount();
     recordBet(allMarkets.find(m=>String(m.id)===String(marketId))?.question||'Market #'+marketId,isYes);
     addFeedEvent('bet',{addr:userAddress.slice(0,6)+'...',isYes,question:(allMarkets.find(m=>String(m.id)===String(marketId))?.question||'Market #'+marketId).slice(0,50)});
     if(!userStreaks[userAddress])userStreaks[userAddress]=0;
     showToast(isYes?"Bet YES placed! 🟢🦁":"Bet NO placed! 🔴🦁","success");
+    // FIX: trigger reactive profile + popup update
+    triggerPostBetUpdate(wasFirstBet);
     loadMarketsFromChain();
   }catch(e){showToast("Bet failed: "+(e.reason||e.message),"error");}
 }
@@ -912,11 +961,15 @@ async function claimWinnings(marketId){
     showToast("Claiming winnings... ⏳");
     const tx=await contract.claimWinnings(marketId,{gasPrice:ethers.parseUnits("1","gwei")});
     await tx.wait();
-    if(!userStreaks[userAddress])userStreaks[userAddress]=0;userStreaks[userAddress]++;
+    if(!userStreaks[userAddress])userStreaks[userAddress]=0;
+    userStreaks[userAddress]++;
     recordWin();
     addFeedEvent('claim',{addr:userAddress.slice(0,6)+'...',question:(allMarkets.find(m=>String(m.id)===String(marketId))?.question||'Market #'+marketId).slice(0,50)});
     if(userStreaks[userAddress]>=5)addFeedEvent('streak',{addr:userAddress.slice(0,6)+'...',streak:userStreaks[userAddress]});
-    playWinSound();launchConfetti();showToast("🎉 Winnings claimed! You're a legend 🦁","success");
+    playWinSound();launchConfetti();
+    showToast("🎉 Winnings claimed! You're a legend 🦁","success");
+    // Update score reactively after win
+    triggerPostBetUpdate(false);
     loadMarketsFromChain();
   }catch(e){showToast("Claim failed: "+(e.reason||e.message),"error");}
 }
@@ -925,16 +978,16 @@ function calcROARScore(totalBets,wins,streak){const accuracy=totalBets>0?(wins/t
 function getROARTier(score){if(score>=1000)return{label:'💎 Diamond',cls:'tier-diamond'};if(score>=500)return{label:'🥇 Gold',cls:'tier-gold'};if(score>=200)return{label:'🥈 Silver',cls:'tier-silver'};return{label:'🥉 Bronze',cls:'tier-bronze'};}
 
 const NFT_ACHIEVEMENTS=[
-  {id:'first_bet',emoji:'🎯',title:'FIRST BET NFT',desc:'You placed your first prediction!',condition:(b,w,s)=>b>=1},
+  {id:'first_bet',emoji:'🎯',title:'FIRST BET NFT',desc:'You placed your first prediction on ROAR!',condition:(b,w,s)=>b>=1},
   {id:'hot_streak',emoji:'🔥',title:'HOT STREAK NFT',desc:'5 correct predictions in a row!',condition:(b,w,s)=>s>=5},
   {id:'five_wins',emoji:'🏆',title:'CHAMPION NFT',desc:'You won 5 predictions!',condition:(b,w,s)=>w>=5},
   {id:'ten_wins',emoji:'💎',title:'DIAMOND HANDS NFT',desc:'10 wins — you are legendary!',condition:(b,w,s)=>w>=10},
   {id:'world_cup',emoji:'🦁',title:'WORLD CUP FAN NFT',desc:'Bet on 3+ World Cup markets!',condition:(b,w,s)=>b>=3},
 ];
 let mintedNFTs=new Set();
-function checkNFTs(totalBets,wins,streak){NFT_ACHIEVEMENTS.forEach(nft=>{if(!mintedNFTs.has(nft.id)&&nft.condition(totalBets,wins,streak)){mintedNFTs.add(nft.id);setTimeout(()=>showNFTPopup(nft),1000);}});}
+function checkNFTs(totalBets,wins,streak){NFT_ACHIEVEMENTS.forEach(nft=>{if(!mintedNFTs.has(nft.id)&&nft.condition(totalBets,wins,streak)){mintedNFTs.add(nft.id);setTimeout(()=>{document.getElementById('nftStreakRow').style.display='none';showNFTPopup(nft);},1000);}});}
 function showNFTPopup(nft){document.getElementById('nftEmoji').textContent=nft.emoji;document.getElementById('nftTitle').textContent=nft.title;document.getElementById('nftDesc').textContent=nft.desc;document.getElementById('nftPopup').classList.add('show');launchConfetti();playWinSound();}
-function closeNFTPopup(){document.getElementById('nftPopup').classList.remove('show');}
+function closeNFTPopup(){document.getElementById('nftPopup').classList.remove('show');document.getElementById('nftStreakRow').style.display='none';}
 
 const feedEvents=[];
 const MOCK_ADDRS=['0xAb3f','0x7E2c','0x9F1a','0x3D8b','0x5C4e','0x2A7d','0x8B1f','0x4E9c'];
@@ -1009,6 +1062,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
 function copyAddress(){if(!userAddress)return;navigator.clipboard.writeText(userAddress).then(()=>showToast("Address copied!","success"));}
 function disconnectWallet(){
   closeProfile();userAddress=null;signer=null;contract=null;provider=null;
+  document.getElementById('navRoarBadge').style.display='none';
   const btn=document.getElementById("connectBtn");btn.textContent="Connect Wallet";btn.classList.remove("connected");btn.onclick=connectWallet;
   document.getElementById("marketsContainer").innerHTML='<div class="connect-prompt"><h3>Connect Your Wallet</h3><p>Connect MetaMask to view and bet on<br>live World Cup prediction markets.</p><button class="btn-connect-big" onclick="connectWallet()">Connect MetaMask</button></div>';
   showToast("Wallet disconnected");
@@ -1020,9 +1074,12 @@ function updateProfilePanel(){
   const streak=userStreaks[userAddress]||0,wins=totalWins,total=userBetCount;
   const winRate=total>0?Math.round((wins/total)*100):0;
   const score=calcROARScore(total,wins,streak),tier=getROARTier(score);
-  document.getElementById('pTotalBets').textContent=total;document.getElementById('pWins').textContent=wins;
-  document.getElementById('pStreak').textContent=streak;document.getElementById('pWinRate').textContent=winRate+'%';
-  document.getElementById('winRateBar').style.width=winRate+'%';document.getElementById('roarScore').textContent=score;
+  document.getElementById('pTotalBets').textContent=total;
+  document.getElementById('pWins').textContent=wins;
+  document.getElementById('pStreak').textContent=streak;
+  document.getElementById('pWinRate').textContent=winRate+'%';
+  document.getElementById('winRateBar').style.width=winRate+'%';
+  document.getElementById('roarScore').textContent=score;
   const tierEl=document.getElementById('roarTier');tierEl.textContent=tier.label;tierEl.className='roar-score-tier '+tier.cls;
   checkNFTs(total,wins,streak);
   const badges=[{label:'🎯 First Bet',earned:total>=1},{label:'🔥 Hot Streak',earned:streak>=3},{label:'🏆 5 Wins',earned:wins>=5},{label:'⚡ Early Adopter',earned:true},{label:'🦁 World Cup Fan',earned:total>=3},{label:'💎 Diamond Hands',earned:wins>=10}];
