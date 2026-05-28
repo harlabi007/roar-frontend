@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ROAR — Live World Cup Prediction Markets</title>
-<script src="https://cdn.jsdelivr.net/npm/ethers@6.4.0/dist/ethers.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.0/dist/ethers.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -515,8 +515,24 @@ let scoreSourceIsAPI=false;
 function escapeHtml(str){
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
-function loadUserBetCount(){if(!userAddress)return;userBetCount=parseInt(localStorage.getItem('roar_bets_'+userAddress)||'0',10);}
+function loadUserData(){
+  if(!userAddress)return;
+  userBetCount=parseInt(localStorage.getItem('roar_bets_'+userAddress)||'0',10);
+  totalWins=parseInt(localStorage.getItem('roar_wins_'+userAddress)||'0',10);
+  userStreaks[userAddress]=parseInt(localStorage.getItem('roar_streak_'+userAddress)||'0',10);
+  try{betHistory=JSON.parse(localStorage.getItem('roar_history_'+userAddress)||'[]');}catch(e){betHistory=[];}
+  try{const m=JSON.parse(localStorage.getItem('roar_minted_'+userAddress)||'[]');mintedNFTs=new Set(m);}catch(e){mintedNFTs=new Set();}
+}
+function loadUserBetCount(){loadUserData();}
 function incrementUserBetCount(){userBetCount++;if(userAddress)localStorage.setItem('roar_bets_'+userAddress,userBetCount);}
+function saveUserData(){
+  if(!userAddress)return;
+  localStorage.setItem('roar_bets_'+userAddress,userBetCount);
+  localStorage.setItem('roar_wins_'+userAddress,totalWins);
+  localStorage.setItem('roar_streak_'+userAddress,userStreaks[userAddress]||0);
+  localStorage.setItem('roar_history_'+userAddress,JSON.stringify(betHistory.slice(-50)));
+  localStorage.setItem('roar_minted_'+userAddress,JSON.stringify([...mintedNFTs]));
+}
 function loadChatMessages(marketId){try{return JSON.parse(localStorage.getItem('roar_chat_'+marketId)||'[]');}catch(e){return[];}}
 function saveChatMessages(marketId,msgs){try{localStorage.setItem('roar_chat_'+marketId,JSON.stringify(msgs.slice(-50)));}catch(e){}}
 
@@ -902,17 +918,16 @@ function updateNavROARScore(){
 
 // ─── FIX 2: triggerPostBetUpdate — called after every bet to update score ────
 function triggerPostBetUpdate(isFirstBet){
+  saveUserData();
   const streak=userStreaks[userAddress]||0;
   const score=calcROARScore(userBetCount,totalWins,streak);
   const tier=getROARTier(score);
 
-  // Update nav badge
+  // Always update nav badge
   updateNavROARScore();
 
-  // Update profile panel if it's open
-  if(document.getElementById('profilePanel').classList.contains('show')){
-    updateProfilePanel();
-  }
+  // Always update profile panel stats (whether open or not)
+  updateProfilePanel();
 
   // FIX 3: Show first-bet popup with streak stats immediately
   if(isFirstBet){
@@ -981,6 +996,7 @@ async function claimWinnings(marketId){
     if(!userStreaks[userAddress])userStreaks[userAddress]=0;
     userStreaks[userAddress]++;
     recordWin();
+    saveUserData();
     addFeedEvent('claim',{addr:userAddress.slice(0,6)+'...',question:(allMarkets.find(m=>String(m.id)===String(marketId))?.question||'Market #'+marketId).slice(0,50)});
     if(userStreaks[userAddress]>=5)addFeedEvent('streak',{addr:userAddress.slice(0,6)+'...',streak:userStreaks[userAddress]});
     playWinSound();launchConfetti();
@@ -1105,8 +1121,15 @@ function updateProfilePanel(){
   if(betHistory.length===0){hist.innerHTML='<div style="font-size:12px;color:var(--muted);text-align:center;padding:1rem;">No bets yet!</div>';}
   else{hist.innerHTML=betHistory.slice(-5).reverse().map(b=>`<div class="bet-history-item"><div class="bet-history-q">${b.question}</div><div class="bet-history-result ${b.result==='WIN'?'bet-win':b.result==='PENDING'?'bet-pending':'bet-loss'}">${b.result==='WIN'?'✅ WIN':b.result==='PENDING'?'⏳':'❌ LOSS'}</div></div>`).join('');}
 }
-function recordBet(question,isYes){betHistory.push({question:question.slice(0,50),side:isYes?'YES':'NO',result:'PENDING'});}
-function recordWin(){totalWins++;for(let i=betHistory.length-1;i>=0;i--){if(betHistory[i].result==='PENDING'){betHistory[i].result='WIN';break;}}}
+function recordBet(question,isYes){
+  betHistory.push({question:question.slice(0,50),side:isYes?'YES':'NO',result:'PENDING',time:Date.now()});
+  saveUserData();
+}
+function recordWin(){
+  totalWins++;
+  for(let i=betHistory.length-1;i>=0;i--){if(betHistory[i].result==='PENDING'){betHistory[i].result='WIN';break;}}
+  saveUserData();
+}
 
 window.ethereum?.on("accountsChanged",()=>location.reload());
 window.ethereum?.on("chainChanged",()=>location.reload());
