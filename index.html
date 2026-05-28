@@ -939,28 +939,40 @@ async function placeBet(marketId,isYes){
   if(!rawAmt||isNaN(amt)||amt<=0){if(input)input.classList.add('invalid');showToast("Enter a valid bet amount (> 0 OKB)","error");return;}
   if(input)input.classList.remove('invalid');
   try{
-    showToast("Placing bet... ⏳");
-    const tx=await contract.placeBet(marketId,isYes,{value:ethers.parseEther(String(amt)),gasPrice:ethers.parseUnits("1","gwei")});
-    await tx.wait();
+    showToast("Sending transaction... ⏳");
+    const marketIdNum = BigInt(marketId);
+    const valueWei = ethers.parseEther(String(amt));
+    // Let the network estimate gas — no hardcoded gasPrice
+    const tx = await contract.placeBet(marketIdNum, isYes, { value: valueWei });
+    showToast("Waiting for confirmation... ⏳");
+    const receipt = await tx.wait();
+    if(receipt.status === 0){
+      showToast("Transaction reverted on-chain. Market may be closed.","error");
+      return;
+    }
     playBetSound();
-    const wasFirstBet = (userBetCount === 0); // check BEFORE incrementing
+    const wasFirstBet = (userBetCount === 0);
     incrementUserBetCount();
     recordBet(allMarkets.find(m=>String(m.id)===String(marketId))?.question||'Market #'+marketId,isYes);
     addFeedEvent('bet',{addr:userAddress.slice(0,6)+'...',isYes,question:(allMarkets.find(m=>String(m.id)===String(marketId))?.question||'Market #'+marketId).slice(0,50)});
     if(!userStreaks[userAddress])userStreaks[userAddress]=0;
-    showToast(isYes?"Bet YES placed! 🟢🦁":"Bet NO placed! 🔴🦁","success");
-    // FIX: trigger reactive profile + popup update
+    showToast(isYes?"✅ Bet YES confirmed on X Layer! 🦁":"❌ Bet NO confirmed on X Layer! 🦁","success");
     triggerPostBetUpdate(wasFirstBet);
     loadMarketsFromChain();
-  }catch(e){showToast("Bet failed: "+(e.reason||e.message),"error");}
+  }catch(e){
+    const msg = e?.reason || e?.data?.message || e?.message || 'Unknown error';
+    showToast("Bet failed: "+msg.slice(0,80),"error");
+    console.error('placeBet error:',e);
+  }
 }
 
 async function claimWinnings(marketId){
   if(!signer){showToast("Connect wallet first!","error");return;}
   try{
     showToast("Claiming winnings... ⏳");
-    const tx=await contract.claimWinnings(marketId,{gasPrice:ethers.parseUnits("1","gwei")});
-    await tx.wait();
+    const tx=await contract.claimWinnings(BigInt(marketId));
+    const receipt=await tx.wait();
+    if(receipt.status===0){showToast("Claim reverted on-chain.","error");return;}
     if(!userStreaks[userAddress])userStreaks[userAddress]=0;
     userStreaks[userAddress]++;
     recordWin();
