@@ -710,6 +710,8 @@ async function loadMarketsFromChain(){
     updateStatsBar();renderMarkets();
     setTimeout(()=>{fetchLiveScores();},200);
     setLiveStatus('ok','Chain updated · '+new Date().toLocaleTimeString());
+    if(document.getElementById('tab-timeline').style.display!=='none')renderTimeline();
+    if(document.getElementById('tab-feed').style.display!=='none')renderSocialFeed();
   }catch(e){
     setLiveStatus('error','Chain fetch failed — retrying…');
     const c=document.getElementById("marketsContainer");
@@ -1044,7 +1046,22 @@ function seedFeed(){
   MOCK_ADDRS.slice(0,5).forEach((addr,i)=>{setTimeout(()=>{feedEvents.push({type:'bet',data:{addr:addr+'...',isYes:Math.random()>0.5,question:questions[i%questions.length],score:Math.floor(Math.random()*500+100)},time:Date.now()-(i*180000),id:Math.random()});},i*200);});
   setTimeout(renderSocialFeed,1200);
 }
-function startFeedSimulation(){setInterval(()=>{if(feedEvents.length>0)return;const q=allMarkets[Math.floor(Math.random()*Math.max(allMarkets.length,1))]?.question||'Will there be a goal?';const addr=MOCK_ADDRS[Math.floor(Math.random()*MOCK_ADDRS.length)]+'...';addFeedEvent('bet',{addr,isYes:Math.random()>0.5,question:q.slice(0,50),score:Math.floor(Math.random()*300+50)});},30000);}
+function startFeedSimulation(){
+  const LIVE_EVENTS=['🔍 VAR review underway...','⚽ GOAL! The crowd erupts!','🟨 Yellow card shown!','🚩 Corner kick awarded','🔥 Shot on target!','💥 Free kick — dangerous position!','🏃 Counter attack!','🧤 Great save by the keeper!'];
+  setInterval(()=>{
+    const liveMarkets=allMarkets.filter(m=>!m.settled&&Number(m.closesAt)>Date.now()/1000);
+    const q=liveMarkets.length>0
+      ?liveMarkets[Math.floor(Math.random()*liveMarkets.length)].question
+      :(allMarkets[Math.floor(Math.random()*Math.max(allMarkets.length,1))]?.question||'Will there be a goal?');
+    const addr=MOCK_ADDRS[Math.floor(Math.random()*MOCK_ADDRS.length)]+'...';
+    if(liveMarkets.length>0&&Math.random()<0.4){
+      const ev=LIVE_EVENTS[Math.floor(Math.random()*LIVE_EVENTS.length)];
+      addFeedEvent('market',{addr:'🤖 ROAR AI',question:ev,score:null});
+    }else{
+      addFeedEvent('bet',{addr,isYes:Math.random()>0.5,question:q.slice(0,50),score:Math.floor(Math.random()*300+50)});
+    }
+  },15000);
+}
 
 const FAN_CLUBS=[
   {id:'arsenal',name:'Arsenal FC',flag:'🔴',members:234,pool:'12.4 OKB',joined:false},
