@@ -620,20 +620,27 @@ setInterval(updateWCCountdown,1000);
 updateWCCountdown();
 
 // ─── AI HELPER ────────────────────────────────────────────────────────────────
-async function callClaudeAI(prompt){return '';}
+async function callClaudeAI(prompt){
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:150,
-        messages:[{role:'user',content:prompt}]
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 150,
+        messages: [
+          { role: 'user', content: prompt }
+        ]
       })
     });
-    const data=await res.json();
-    return data.content?.[0]?.text||'';
-  }catch(e){return '';}
+
+    const data = await res.json();
+    return data.content?.[0]?.text || '';
+  } catch (e) {
+    return '';
+  }
 }
 
 // ─── NEW MARKET ALERT ─────────────────────────────────────────────────────────
