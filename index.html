@@ -620,7 +620,7 @@ setInterval(updateWCCountdown,1000);
 updateWCCountdown();
 
 // ─── AI HELPER ────────────────────────────────────────────────────────────────
-async function callClaudeAI(prompt){
+async function callClaudeAI(prompt){return '';}
   try{
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
@@ -692,16 +692,23 @@ async function loadAIInsight(marketId){
   const el=document.getElementById('ai-insight-text-'+marketId);if(!el)return;
   if(aiInsightCache.has(marketId)){el.textContent=aiInsightCache.get(marketId);return;}
   el.className='ai-insight-text ai-insight-loading';
-  el.textContent='Analyzing match data...';
-  const teams=m.matchId.replace(/_/g,' ').split(' vs ');
-  const prompt=`You are a football analyst. In exactly 2 sentences (max 40 words total), give a sharp statistical insight about this prediction market: "${m.question}" for the match ${m.matchId.replace(/_/g,' ')}. Be specific and confident. No filler words.`;
-  const insight=await callClaudeAI(prompt);
-  if(insight){
-    aiInsightCache.set(marketId,insight);
-    el.className='ai-insight-text';
-    el.textContent=insight;
-  }else{
-    el.textContent='AI analysis unavailable — trust your instincts! 🦁';
+  el.textContent='🤖 Analyzing match data...';
+  try{
+    const res=await fetch('https://roar-agent-production.up.railway.app/ai/insight',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({question:m.question,matchId:m.matchId})
+    });
+    const data=await res.json();
+    if(data.insight){
+      aiInsightCache.set(marketId,data.insight);
+      el.className='ai-insight-text';
+      el.textContent=data.insight;
+    }else{
+      el.textContent='Analysis unavailable — trust your instincts! 🦁';
+    }
+  }catch(e){
+    el.textContent='Analysis unavailable — trust your instincts! 🦁';
   }
 }
 
@@ -709,17 +716,21 @@ async function loadAIInsight(marketId){
 let aiSummaryTimeout=null;
 async function generateAISummary(settledMarkets){
   if(settledMarkets.length===0)return;
-  const recent=settledMarkets.slice(0,3);
-  const matchSummary=recent.map(m=>`"${m.question}" → ${m.outcome===1n?'YES WON':'NO WON'}`).join(', ');
-  const prompt=`You are a live football commentator. In 2-3 exciting sentences (max 60 words), summarize these prediction market results: ${matchSummary}. Be enthusiastic and engaging!`;
-  const summary=await callClaudeAI(prompt);
-  if(summary){
-    document.getElementById('aiSummaryText').textContent=summary;
-    const popup=document.getElementById('aiSummaryPopup');
-    popup.classList.add('show');
-    if(aiSummaryTimeout)clearTimeout(aiSummaryTimeout);
-    aiSummaryTimeout=setTimeout(()=>popup.classList.remove('show'),12000);
-  }
+  try{
+    const res=await fetch('https://roar-agent-production.up.railway.app/ai/summary',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({markets:settledMarkets.map(m=>({question:m.question,outcome:m.outcome===1n?'YES WON':'NO WON'}))})
+    });
+    const data=await res.json();
+    if(data.summary){
+      document.getElementById('aiSummaryText').textContent=data.summary;
+      const popup=document.getElementById('aiSummaryPopup');
+      popup.classList.add('show');
+      if(aiSummaryTimeout)clearTimeout(aiSummaryTimeout);
+      aiSummaryTimeout=setTimeout(()=>popup.classList.remove('show'),12000);
+    }
+  }catch(e){}
 }
 function closeAISummary(){document.getElementById('aiSummaryPopup').classList.remove('show');}
 
