@@ -36,7 +36,16 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2
 .refresh-countdown-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 1s linear;}
 .score-changed{animation:scorePop 0.5s ease;}
 @keyframes scorePop{0%{transform:scale(1.35);color:var(--accent);}100%{transform:scale(1);}}
-.hero{text-align:center;padding:2.5rem 2rem 1.5rem;max-width:800px;margin:0 auto;}
+/* ─── WORLD CUP COUNTDOWN ─── */
+.wc-countdown{background:linear-gradient(135deg,rgba(232,255,71,0.06),rgba(71,255,156,0.04));border:1px solid rgba(232,255,71,0.15);border-radius:14px;padding:1rem 1.5rem;margin:1rem auto;max-width:600px;text-align:center;}
+.wc-countdown-label{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem;display:flex;align-items:center;justify-content:center;gap:6px;}
+.wc-countdown-units{display:flex;gap:1rem;justify-content:center;}
+.wc-unit{text-align:center;}
+.wc-num{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--accent);letter-spacing:2px;line-height:1;}
+.wc-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.wc-sep{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--muted);align-self:center;padding-bottom:12px;}
+/* ─── HERO ─── */
+.hero{text-align:center;padding:2rem 2rem 1rem;max-width:800px;margin:0 auto;}
 .hero-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;}
 .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,9vw,6rem);letter-spacing:3px;line-height:0.95;margin-bottom:0.5rem;}
 .hero h1 em{font-style:normal;color:var(--accent);}
@@ -71,6 +80,49 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2
 .market-card.closed-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--muted);}
 @keyframes borderPulse{0%,100%{border-color:rgba(232,255,71,0.15);}50%{border-color:rgba(232,255,71,0.4);}}
 .market-card.open-card{animation:borderPulse 3s ease-in-out infinite;}
+/* ─── AI INSIGHT BOX ─── */
+.ai-insight{background:linear-gradient(135deg,rgba(184,71,255,0.08),rgba(71,184,255,0.06));border:1px solid rgba(184,71,255,0.2);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11px;color:var(--text);line-height:1.5;position:relative;}
+.ai-insight-label{font-size:10px;font-weight:700;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:4px;}
+.ai-insight-text{color:var(--muted2);}
+.ai-insight-loading{color:var(--muted);font-style:italic;}
+.btn-ai{background:rgba(184,71,255,0.08);color:var(--purple);border:1px solid rgba(184,71,255,0.2);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+.btn-ai:hover{background:rgba(184,71,255,0.15);}
+/* ─── STREAK MULTIPLIER ─── */
+.streak-multiplier{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,rgba(255,148,71,0.15),rgba(232,255,71,0.1));border:1px solid rgba(255,148,71,0.4);color:var(--orange);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:8px;animation:pulseGlow 2s ease-in-out infinite;}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,148,71,0.3);}50%{box-shadow:0 0 8px 3px rgba(255,148,71,0.2);}}
+/* ─── ODDS CHART ─── */
+.odds-chart{display:flex;align-items:flex-end;gap:2px;height:24px;margin-bottom:6px;}
+.odds-bar-tick{width:6px;border-radius:2px 2px 0 0;transition:height 0.3s;}
+.odds-bar-yes{background:var(--green);opacity:0.7;}
+.odds-bar-no{background:var(--red);opacity:0.7;}
+.odds-chart-label{font-size:9px;color:var(--muted);margin-bottom:2px;}
+/* ─── NEW MARKET ALERT ─── */
+.market-alert{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);background:linear-gradient(135deg,var(--bg3),var(--bg4));border:1px solid rgba(232,255,71,0.4);border-radius:12px;padding:12px 20px;font-size:13px;font-weight:600;color:var(--accent);z-index:998;opacity:0;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 4px 30px rgba(232,255,71,0.2);white-space:nowrap;}
+.market-alert.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* ─── SHARE CARD POPUP ─── */
+.share-card-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:400;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.share-card-overlay.show{display:flex;}
+.share-card{background:var(--bg2);border:1px solid rgba(232,255,71,0.3);border-radius:20px;padding:2rem;width:360px;text-align:center;box-shadow:0 0 60px rgba(232,255,71,0.15);}
+.share-card-header{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:4px;color:var(--accent);margin-bottom:0.25rem;}
+.share-card-sub{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:1.5rem;}
+.share-card-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;}
+.share-stat{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;}
+.share-stat-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--accent);letter-spacing:2px;line-height:1;}
+.share-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+.share-card-tier{display:inline-block;padding:4px 16px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:1rem;}
+.share-card-addr{font-family:monospace;font-size:11px;color:var(--muted2);margin-bottom:1.5rem;}
+.share-card-btns{display:flex;gap:8px;}
+.btn-share-x{flex:1;background:var(--accent);color:#000;border:none;border-radius:8px;padding:10px;font-weight:700;font-size:13px;cursor:pointer;transition:all 0.2s;}
+.btn-share-x:hover{opacity:0.85;}
+.btn-close-share{background:var(--bg3);color:var(--muted2);border:1px solid var(--border);border-radius:8px;padding:10px 16px;font-weight:600;font-size:13px;cursor:pointer;transition:all 0.2s;}
+.btn-close-share:hover{color:var(--text);}
+/* ─── AI SUMMARY POPUP ─── */
+.ai-summary-popup{position:fixed;bottom:5rem;right:2rem;width:320px;background:var(--bg2);border:1px solid rgba(184,71,255,0.3);border-radius:14px;padding:1.25rem;z-index:400;transform:translateY(20px);opacity:0;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 8px 40px rgba(184,71,255,0.15);}
+.ai-summary-popup.show{transform:translateY(0);opacity:1;}
+.ai-summary-title{font-size:12px;font-weight:700;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.ai-summary-text{font-size:12px;color:var(--muted2);line-height:1.6;}
+.ai-summary-close{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;}
+/* ─── SCORE WIDGET ─── */
 .score-widget{display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:8px;padding:8px 10px;margin-bottom:4px;font-size:12px;}
 .score-team{font-weight:700;color:var(--text);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;}
 .score-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--accent);letter-spacing:2px;padding:0 8px;transition:color 0.3s;}
@@ -222,12 +274,10 @@ footer a{color:var(--accent);text-decoration:none;}
 .nft-emoji{font-size:4rem;margin-bottom:0.5rem;}
 .nft-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;color:var(--accent);margin-bottom:0.25rem;}
 .nft-desc{font-size:13px;color:var(--muted2);margin-bottom:0.75rem;}
-/* ── NEW: streak row inside popup ── */
 .nft-streak-row{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1rem;padding:10px;background:var(--bg3);border-radius:10px;border:1px solid var(--border);}
 .nft-streak-stat{text-align:center;}
 .nft-streak-val{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--accent);letter-spacing:2px;line-height:1;}
 .nft-streak-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
-/* ── NEW: roar score floating badge in nav ── */
 .roar-score-badge{display:flex;align-items:center;gap:5px;background:rgba(232,255,71,0.08);border:1px solid rgba(232,255,71,0.2);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:700;color:var(--accent);cursor:pointer;transition:all 0.2s;}
 .roar-score-badge:hover{background:rgba(232,255,71,0.15);}
 .roar-score-badge .badge-val{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1px;}
@@ -266,6 +316,8 @@ footer a{color:var(--accent);text-decoration:none;}
 .btn-disconnect:hover{background:rgba(255,71,71,0.15);}
 .win-rate-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:6px;}
 .win-rate-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:3px;transition:width 1s ease;}
+.btn-share-profile{width:100%;background:rgba(232,255,71,0.08);color:var(--accent);border:1px solid rgba(232,255,71,0.2);border-radius:8px;padding:0.6rem;font-weight:700;cursor:pointer;font-size:13px;transition:all 0.2s;margin-bottom:8px;}
+.btn-share-profile:hover{background:rgba(232,255,71,0.15);}
 </style>
 </head>
 <body>
@@ -274,7 +326,6 @@ footer a{color:var(--accent);text-decoration:none;}
   <div class="logo">ROAR</div>
   <div class="nav-right">
     <div class="network-badge">X LAYER TESTNET</div>
-    <!-- LIVE ROAR SCORE BADGE IN NAV -->
     <div class="roar-score-badge" id="navRoarBadge" onclick="openProfile()" style="display:none;">
       🦁 <span class="badge-val" id="navRoarVal">0</span> ROAR
     </div>
@@ -302,6 +353,9 @@ footer a{color:var(--accent);text-decoration:none;}
   <div id="notifList"><div class="notif-item">No notifications yet.</div></div>
 </div>
 
+<!-- New Market Alert Banner -->
+<div class="market-alert" id="marketAlert"></div>
+
 <div class="ticker-wrap">
   <div class="ticker">
     <span class="ticker-item">🏆 World Cup 2026 <span class="up">LIVE</span></span>
@@ -326,6 +380,20 @@ footer a{color:var(--accent);text-decoration:none;}
 <div class="hero">
   <div class="hero-tag">⚡ World Cup 2026</div>
   <h1>Feel the Match.<br><em>Own the Moment.</em></h1>
+</div>
+
+<!-- World Cup Countdown -->
+<div class="wc-countdown" id="wcCountdown">
+  <div class="wc-countdown-label">🏆 World Cup 2026 Kicks Off In</div>
+  <div class="wc-countdown-units">
+    <div class="wc-unit"><div class="wc-num" id="wc-days">--</div><div class="wc-label">Days</div></div>
+    <div class="wc-sep">:</div>
+    <div class="wc-unit"><div class="wc-num" id="wc-hours">--</div><div class="wc-label">Hours</div></div>
+    <div class="wc-sep">:</div>
+    <div class="wc-unit"><div class="wc-num" id="wc-mins">--</div><div class="wc-label">Mins</div></div>
+    <div class="wc-sep">:</div>
+    <div class="wc-unit"><div class="wc-num" id="wc-secs">--</div><div class="wc-label">Secs</div></div>
+  </div>
 </div>
 
 <div class="stats-bar">
@@ -396,27 +464,44 @@ footer a{color:var(--accent);text-decoration:none;}
   </div>
 </div>
 
-<!-- NFT / Achievement Popup — now includes streak stats row -->
+<!-- NFT Popup -->
 <div class="nft-popup" id="nftPopup">
   <div class="nft-emoji" id="nftEmoji">🏆</div>
   <div class="nft-title" id="nftTitle">Achievement Unlocked!</div>
   <div class="nft-desc" id="nftDesc">You earned a ROAR NFT</div>
-  <!-- Streak stats shown after first bet -->
   <div class="nft-streak-row" id="nftStreakRow" style="display:none;">
-    <div class="nft-streak-stat">
-      <div class="nft-streak-val" id="nftStatBets">0</div>
-      <div class="nft-streak-label">Total Bets</div>
-    </div>
-    <div class="nft-streak-stat">
-      <div class="nft-streak-val" id="nftStatStreak">0</div>
-      <div class="nft-streak-label">🔥 Streak</div>
-    </div>
-    <div class="nft-streak-stat">
-      <div class="nft-streak-val" id="nftStatScore">0</div>
-      <div class="nft-streak-label">ROAR Score</div>
-    </div>
+    <div class="nft-streak-stat"><div class="nft-streak-val" id="nftStatBets">0</div><div class="nft-streak-label">Total Bets</div></div>
+    <div class="nft-streak-stat"><div class="nft-streak-val" id="nftStatStreak">0</div><div class="nft-streak-label">🔥 Streak</div></div>
+    <div class="nft-streak-stat"><div class="nft-streak-val" id="nftStatScore">0</div><div class="nft-streak-label">ROAR Score</div></div>
   </div>
   <button class="nft-close" onclick="closeNFTPopup()">Awesome! 🦁</button>
+</div>
+
+<!-- Share Profile Card Popup -->
+<div class="share-card-overlay" id="shareCardOverlay">
+  <div class="share-card" id="shareCardInner">
+    <div class="share-card-header">ROAR</div>
+    <div class="share-card-sub">🦁 World Cup 2026 Predictor</div>
+    <div class="share-card-tier" id="scTier"></div>
+    <div class="share-card-addr" id="scAddr"></div>
+    <div class="share-card-stats">
+      <div class="share-stat"><div class="share-stat-val" id="scScore">0</div><div class="share-stat-label">ROAR Score</div></div>
+      <div class="share-stat"><div class="share-stat-val" id="scWinRate">0%</div><div class="share-stat-label">Win Rate</div></div>
+      <div class="share-stat"><div class="share-stat-val" id="scBets">0</div><div class="share-stat-label">Total Bets</div></div>
+      <div class="share-stat"><div class="share-stat-val" id="scStreak">0🔥</div><div class="share-stat-label">Streak</div></div>
+    </div>
+    <div class="share-card-btns">
+      <button class="btn-share-x" onclick="shareProfileToX()">𝕏 Share on X</button>
+      <button class="btn-close-share" onclick="closeShareCard()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Summary Popup -->
+<div class="ai-summary-popup" id="aiSummaryPopup">
+  <button class="ai-summary-close" onclick="closeAISummary()">✕</button>
+  <div class="ai-summary-title">🤖 AI Match Summary</div>
+  <div class="ai-summary-text" id="aiSummaryText">Generating summary...</div>
 </div>
 
 <div class="profile-overlay" id="profileOverlay" onclick="closeProfile()"></div>
@@ -448,7 +533,7 @@ footer a{color:var(--accent);text-decoration:none;}
       <div class="profile-section-title">Win Rate Progress</div>
       <div class="win-rate-bar"><div class="win-rate-fill" id="winRateBar" style="width:0%"></div></div>
     </div>
-    <div style="margin-bottom:1.5rem;">
+    <div style="margin-bottom:1rem;">
       <div class="profile-section-title">Badges</div>
       <div class="badges-grid" id="profileBadges">
         <div class="badge badge-locked">🎯 First Bet</div>
@@ -459,6 +544,7 @@ footer a{color:var(--accent);text-decoration:none;}
         <div class="badge badge-locked">💎 Diamond Hands</div>
       </div>
     </div>
+    <button class="btn-share-profile" onclick="openShareCard()">𝕏 Share My ROAR Stats</button>
     <div>
       <div class="profile-section-title">Recent Activity</div>
       <div class="bet-history" id="betHistory">
@@ -498,6 +584,7 @@ let selectedAmounts={};
 let prevMarketCount=0;
 let userBetCount=0;
 const marketsById=new Map();
+const oddsHistory=new Map(); // marketId -> [{yes,no,time}]
 
 const CONTRACT_POLL_MS=15000;
 const SCORE_POLL_MS=10000;
@@ -511,6 +598,130 @@ let lastScoreFetch=0;
 let nextContractFetch=0;
 let liveScoresCache=new Map();
 let scoreSourceIsAPI=false;
+
+// ─── WORLD CUP COUNTDOWN ─────────────────────────────────────────────────────
+const WC_START = new Date('2026-06-11T18:00:00Z').getTime();
+function updateWCCountdown(){
+  const diff = WC_START - Date.now();
+  if(diff <= 0){
+    document.getElementById('wcCountdown').innerHTML='<div class="wc-countdown-label">🏆 WORLD CUP 2026 IS LIVE!</div>';
+    return;
+  }
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  document.getElementById('wc-days').textContent=String(d).padStart(2,'0');
+  document.getElementById('wc-hours').textContent=String(h).padStart(2,'0');
+  document.getElementById('wc-mins').textContent=String(m).padStart(2,'0');
+  document.getElementById('wc-secs').textContent=String(s).padStart(2,'0');
+}
+setInterval(updateWCCountdown,1000);
+updateWCCountdown();
+
+// ─── AI HELPER ────────────────────────────────────────────────────────────────
+async function callClaudeAI(prompt){
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:150,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await res.json();
+    return data.content?.[0]?.text||'';
+  }catch(e){return '';}
+}
+
+// ─── NEW MARKET ALERT ─────────────────────────────────────────────────────────
+function showNewMarketAlert(question,matchId){
+  const alert=document.getElementById('marketAlert');
+  alert.textContent='🔴 New Market: '+question.slice(0,60)+'...';
+  alert.classList.add('show');
+  launchConfetti();
+  setTimeout(()=>alert.classList.remove('show'),5000);
+}
+
+// ─── ODDS HISTORY TRACKER ────────────────────────────────────────────────────
+function updateOddsHistory(marketId,yesPct){
+  if(!oddsHistory.has(marketId))oddsHistory.set(marketId,[]);
+  const hist=oddsHistory.get(marketId);
+  hist.push({yes:yesPct,no:100-yesPct,time:Date.now()});
+  if(hist.length>8)hist.shift();
+}
+
+function renderOddsChart(marketId){
+  const hist=oddsHistory.get(marketId)||[];
+  if(hist.length<2)return '';
+  const bars=hist.map(h=>`<div class="odds-bar-tick odds-bar-yes" style="height:${Math.round(h.yes/4)}px;"></div>`).join('');
+  return`<div class="odds-chart-label">📊 Odds trend (YES)</div><div class="odds-chart">${bars}</div>`;
+}
+
+// ─── SHARE PROFILE CARD ──────────────────────────────────────────────────────
+function openShareCard(){
+  if(!userAddress){showToast("Connect wallet first!","error");return;}
+  const streak=userStreaks[userAddress]||0,wins=totalWins,total=userBetCount;
+  const winRate=total>0?Math.round((wins/total)*100):0;
+  const score=calcROARScore(total,wins,streak),tier=getROARTier(score);
+  document.getElementById('scScore').textContent=score;
+  document.getElementById('scWinRate').textContent=winRate+'%';
+  document.getElementById('scBets').textContent=total;
+  document.getElementById('scStreak').textContent=streak+'🔥';
+  document.getElementById('scAddr').textContent=userAddress.slice(0,8)+'...'+userAddress.slice(-6);
+  const tierEl=document.getElementById('scTier');
+  tierEl.textContent=tier.label;tierEl.className='share-card-tier '+tier.cls;
+  document.getElementById('shareCardOverlay').classList.add('show');
+}
+function closeShareCard(){document.getElementById('shareCardOverlay').classList.remove('show');}
+function shareProfileToX(){
+  const streak=userStreaks[userAddress]||0,wins=totalWins,total=userBetCount;
+  const winRate=total>0?Math.round((wins/total)*100):0;
+  const score=calcROARScore(total,wins,streak),tier=getROARTier(score);
+  const text=`🦁 My @RoarMarkets Stats\n\n${tier.label} Predictor\n⚡ ROAR Score: ${score}\n🎯 Win Rate: ${winRate}%\n🔥 Streak: ${streak}\n📊 Total Bets: ${total}\n\nJoin the World Cup 2026 prediction markets!\n${window.location.href}\n\n#ROAR #XCupHackathon #WorldCup2026`;
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(text),'_blank');
+  closeShareCard();
+}
+
+// ─── AI MATCH PREDICTOR ──────────────────────────────────────────────────────
+const aiInsightCache=new Map();
+async function loadAIInsight(marketId){
+  const m=marketsById.get(String(marketId));if(!m)return;
+  const el=document.getElementById('ai-insight-text-'+marketId);if(!el)return;
+  if(aiInsightCache.has(marketId)){el.textContent=aiInsightCache.get(marketId);return;}
+  el.className='ai-insight-text ai-insight-loading';
+  el.textContent='Analyzing match data...';
+  const teams=m.matchId.replace(/_/g,' ').split(' vs ');
+  const prompt=`You are a football analyst. In exactly 2 sentences (max 40 words total), give a sharp statistical insight about this prediction market: "${m.question}" for the match ${m.matchId.replace(/_/g,' ')}. Be specific and confident. No filler words.`;
+  const insight=await callClaudeAI(prompt);
+  if(insight){
+    aiInsightCache.set(marketId,insight);
+    el.className='ai-insight-text';
+    el.textContent=insight;
+  }else{
+    el.textContent='AI analysis unavailable — trust your instincts! 🦁';
+  }
+}
+
+// ─── AI POST-MATCH SUMMARY ───────────────────────────────────────────────────
+let aiSummaryTimeout=null;
+async function generateAISummary(settledMarkets){
+  if(settledMarkets.length===0)return;
+  const recent=settledMarkets.slice(0,3);
+  const matchSummary=recent.map(m=>`"${m.question}" → ${m.outcome===1n?'YES WON':'NO WON'}`).join(', ');
+  const prompt=`You are a live football commentator. In 2-3 exciting sentences (max 60 words), summarize these prediction market results: ${matchSummary}. Be enthusiastic and engaging!`;
+  const summary=await callClaudeAI(prompt);
+  if(summary){
+    document.getElementById('aiSummaryText').textContent=summary;
+    const popup=document.getElementById('aiSummaryPopup');
+    popup.classList.add('show');
+    if(aiSummaryTimeout)clearTimeout(aiSummaryTimeout);
+    aiSummaryTimeout=setTimeout(()=>popup.classList.remove('show'),12000);
+  }
+}
+function closeAISummary(){document.getElementById('aiSummaryPopup').classList.remove('show');}
 
 function escapeHtml(str){
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -678,7 +889,6 @@ async function connectWallet(){
     btn.textContent=userAddress.slice(0,6)+"..."+userAddress.slice(-4);
     btn.classList.add("connected");btn.onclick=openProfile;
     loadUserBetCount();
-    // Show ROAR score badge in nav
     document.getElementById('navRoarBadge').style.display='flex';
     updateNavROARScore();
     showToast("Wallet connected! 🦁");
@@ -700,18 +910,41 @@ async function loadMarketsFromChain(){
     setLiveStatus('ok','Fetching chain data…');
     const markets=await contract.getAllMarkets();
     const newCount=markets.length;
+
+    // Detect new markets and show alert
     if(newCount>prevMarketCount&&prevMarketCount>0){
-      markets.slice(prevMarketCount).forEach(m=>addNotification(m.matchId.replace(/_/g,' ')+' — "'+m.question+'"'));
+      const newMarkets=markets.slice(prevMarketCount);
+      newMarkets.forEach(m=>{
+        addNotification(m.matchId.replace(/_/g,' ')+' — "'+m.question+'"');
+        showNewMarketAlert(m.question,m.matchId);
+      });
     }
     prevMarketCount=newCount;
+    const prevSettledCount=allMarkets.filter(m=>m.settled).length;
     allMarkets=[...markets].reverse();
-    marketsById.clear();allMarkets.forEach(m=>marketsById.set(String(m.id),m));
+    marketsById.clear();allMarkets.forEach(m=>{
+      marketsById.set(String(m.id),m);
+      // Update odds history for open markets
+      const now=Date.now()/1000;
+      if(!m.settled&&Number(m.closesAt)>now){
+        const yes=Number(m.totalYes),no=Number(m.totalNo),total=yes+no;
+        const yesPct=total===0?50:Math.round((yes/total)*100);
+        updateOddsHistory(String(m.id),yesPct);
+      }
+    });
     lastContractFetch=Date.now();
     updateStatsBar();renderMarkets();
     setTimeout(()=>{fetchLiveScores();},200);
     setLiveStatus('ok','Chain updated · '+new Date().toLocaleTimeString());
     if(document.getElementById('tab-timeline').style.display!=='none')renderTimeline();
     if(document.getElementById('tab-feed').style.display!=='none')renderSocialFeed();
+
+    // Trigger AI summary when new markets settle
+    const newSettledCount=allMarkets.filter(m=>m.settled).length;
+    if(newSettledCount>prevSettledCount&&prevSettledCount>0){
+      const recentSettled=allMarkets.filter(m=>m.settled&&m.outcome!==3n).slice(0,3);
+      setTimeout(()=>generateAISummary(recentSettled),2000);
+    }
   }catch(e){
     setLiveStatus('error','Chain fetch failed — retrying…');
     const c=document.getElementById("marketsContainer");
@@ -721,6 +954,7 @@ async function loadMarketsFromChain(){
   }
   pollTimeout=setTimeout(loadMarketsFromChain,CONTRACT_POLL_MS);
 }
+
 function loadMarkets(){
   showToast("Refreshing markets... ⏳");
   if(contract){loadMarketsFromChain();}
@@ -820,6 +1054,10 @@ function renderMarket(m){
   const mId=String(m.id),safeQ=escapeHtml(m.question),safeMatch=escapeHtml(m.matchId.replace(/_/g,' '));
   const score=matchScoreToMarket(m.matchId)||buildSimScore(m.matchId);
 
+  // Streak multiplier (3+ wins = 1.5x, 5+ = 2x)
+  const multiplier=streak>=5?'2x':streak>=3?'1.5x':'';
+  const multiplierHtml=multiplier&&isOpen?`<div class="streak-multiplier">🔥 ${streak} streak — ${multiplier} MULTIPLIER ACTIVE!</div>`:'';
+
   let statusHtml='';
   if(m.settled){
     if(m.outcome===1)statusHtml='<span class="market-status status-yes">✅ YES WON</span>';
@@ -842,16 +1080,28 @@ function renderMarket(m){
         (score.fromAPI?'🟢 Live data via TheSportsDB':'⚙️ Simulated — no live feed available')+'</div>'
     :'';
 
+  // Odds chart
+  const oddsChartHtml=isOpen?renderOddsChart(mId):'';
+
+  // AI Insight box (only for open markets)
+  const aiInsightHtml=isOpen
+    ?'<div class="ai-insight"><div class="ai-insight-label">🤖 AI Insight</div>'
+      +'<div class="ai-insight-text" id="ai-insight-text-'+mId+'">Click to get AI prediction analysis...</div></div>'
+      +'<button class="btn-ai" onclick="loadAIInsight(\''+mId+'\')">🤖 Get AI Prediction</button>'
+    :'';
+
   return '<div class="market-card '+cardClass+'">'
-    +(streak>=3?'<div class="hot-streak">🔥 '+streak+' correct in a row!</div>':'')
+    +multiplierHtml
     +scoreWidgetHtml
     +'<div class="market-top"><div class="market-match">⚽ '+safeMatch+'</div>'
     +'<div class="market-timer '+(t?'timer-open':'timer-closed')+'" id="timer-'+mId+'">'+(t?'⏱ '+t:'Closed')+'</div></div>'
     +'<div class="market-question">'+safeQ+'</div>'
+    +oddsChartHtml
     +(isOpen?'<div class="odds-label">📊 Simulated Odds</div>':'')
     +'<div class="odds-bar"><div class="odds-labels"><span class="odds-yes">YES '+(isOpen?simOdds.yes:yesPct)+'%</span><span class="odds-no">NO '+(isOpen?simOdds.no:100-yesPct)+'%</span></div>'
     +'<div class="bar-track"><div class="bar-fill" style="width:'+(isOpen?simOdds.yes:yesPct)+'%"></div></div></div>'
     +'<div class="community-label">Community: '+yesPct+'% think YES</div>'
+    +aiInsightHtml
     +(isOpen
       ?'<div class="quick-bets">'+[0.01,0.05,0.1,0.5].map(a=>'<button class="quick-bet-btn qb-'+mId+'" data-amt="'+a+'" onclick="selectQuickBet(\''+mId+'\','+a+')">'+a+'</button>').join('')
         +'<span style="font-size:10px;color:var(--muted);padding:4px;">OKB</span></div>'
@@ -903,7 +1153,6 @@ function renderLeaderboard(){
     +'<div class="lb-bets">'+userBetCount+' bets</div><div class="lb-winnings">— OKB</div></div>';
 }
 
-// ─── FIX 1: updateNavROARScore — updates the live badge in the nav bar ───────
 function updateNavROARScore(){
   if(!userAddress)return;
   const streak=userStreaks[userAddress]||0;
@@ -912,39 +1161,28 @@ function updateNavROARScore(){
   const val=document.getElementById('navRoarVal');
   if(!badge||!val)return;
   val.textContent=score;
-  // Bump animation
   badge.classList.remove('bump');
   void badge.offsetWidth;
   badge.classList.add('bump');
 }
 
-// ─── FIX 2: triggerPostBetUpdate — called after every bet to update score ────
 function triggerPostBetUpdate(isFirstBet){
   saveUserData();
   const streak=userStreaks[userAddress]||0;
   const score=calcROARScore(userBetCount,totalWins,streak);
-  const tier=getROARTier(score);
-
-  // Always update nav badge
   updateNavROARScore();
-
-  // Always update profile panel stats (whether open or not)
   updateProfilePanel();
-
-  // FIX 3: Show first-bet popup with streak stats immediately
   if(isFirstBet){
     const nft=NFT_ACHIEVEMENTS.find(n=>n.id==='first_bet');
     if(nft){
       mintedNFTs.add('first_bet');
-      // Populate the streak row with live data
       document.getElementById('nftStatBets').textContent=userBetCount;
       document.getElementById('nftStatStreak').textContent=streak;
       document.getElementById('nftStatScore').textContent=score;
       document.getElementById('nftStreakRow').style.display='flex';
       showNFTPopup(nft);
     }
-  } else {
-    // For subsequent bets, check other achievements
+  }else{
     checkNFTs(userBetCount,totalWins,streak);
   }
 }
@@ -957,23 +1195,19 @@ async function placeBet(marketId,isYes){
   if(input)input.classList.remove('invalid');
   try{
     showToast("Sending transaction... ⏳");
-    const marketIdNum = BigInt(marketId);
-    const valueWei = ethers.parseEther(String(amt));
-    const tx = await contract.placeBet(marketIdNum, isYes, {
-      value: valueWei,
-      gasLimit: 300000n  // explicit gas limit — prevents silent OOG failures
-    });
-    const shortHash = tx.hash.slice(0,12)+'...';
+    const marketIdNum=BigInt(marketId);
+    const valueWei=ethers.parseEther(String(amt));
+    const tx=await contract.placeBet(marketIdNum,isYes,{value:valueWei,gasLimit:300000n});
+    const shortHash=tx.hash.slice(0,12)+'...';
     showToast("TX sent: "+shortHash+" — waiting... ⏳");
-    const receipt = await tx.wait();
-    console.log('placeBet receipt:', receipt);
-    if(receipt.status === 0){
-      showToast("❌ TX reverted on-chain. Check OKLink: "+tx.hash.slice(0,12),"error");
+    const receipt=await tx.wait();
+    if(receipt.status===0){
+      showToast("❌ TX reverted on-chain.","error");
       window.open('https://www.oklink.com/xlayer-test/tx/'+tx.hash,'_blank');
       return;
     }
     playBetSound();
-    const wasFirstBet = (userBetCount === 0);
+    const wasFirstBet=(userBetCount===0);
     incrementUserBetCount();
     recordBet(allMarkets.find(m=>String(m.id)===String(marketId))?.question||'Market #'+marketId,isYes);
     addFeedEvent('bet',{addr:userAddress.slice(0,6)+'...',isYes,question:(allMarkets.find(m=>String(m.id)===String(marketId))?.question||'Market #'+marketId).slice(0,50)});
@@ -982,7 +1216,7 @@ async function placeBet(marketId,isYes){
     triggerPostBetUpdate(wasFirstBet);
     loadMarketsFromChain();
   }catch(e){
-    const msg = e?.reason || e?.error?.message || e?.data?.message || e?.message || 'Unknown error';
+    const msg=e?.reason||e?.error?.message||e?.data?.message||e?.message||'Unknown error';
     console.error('placeBet full error:',e);
     showToast("Bet failed: "+msg.slice(0,100),"error");
   }
@@ -1003,7 +1237,6 @@ async function claimWinnings(marketId){
     if(userStreaks[userAddress]>=5)addFeedEvent('streak',{addr:userAddress.slice(0,6)+'...',streak:userStreaks[userAddress]});
     playWinSound();launchConfetti();
     showToast("🎉 Winnings claimed! You're a legend 🦁","success");
-    // Update score reactively after win
     triggerPostBetUpdate(false);
     loadMarketsFromChain();
   }catch(e){showToast("Claim failed: "+(e.reason||e.message),"error");}
@@ -1036,7 +1269,7 @@ function renderSocialFeed(){
     const initials=addr.slice(2,4).toUpperCase();let action='';
     if(e.type==='bet')action=`bet <span class="${e.data.isYes?'feed-yes':'feed-no'}">${e.data.isYes?'✅ YES':'❌ NO'}</span> on <strong>"${e.data.question}"</strong>`;
     else if(e.type==='claim')action=`🏆 claimed winnings on <strong>"${e.data.question}"</strong>`;
-    else if(e.type==='market')action=`🤖 AI created market <strong>"${e.data.question}"</strong>`;
+    else if(e.type==='market')action=`🤖 AI: <strong>${e.data.question}</strong>`;
     else if(e.type==='streak')action=`🔥 is on a <strong>${e.data.streak}-prediction winning streak!</strong>`;
     return`<div class="feed-item"><div class="feed-avatar">${initials}</div><div class="feed-content"><div><span class="feed-addr">${addr}</span>${e.data.score?`<span class="feed-badge">⚡ ${e.data.score} ROAR</span>`:''}</div><div class="feed-action">${action}</div><div class="feed-time">${timeAgo(e.time)}</div></div></div>`;
   }).join('');
@@ -1047,7 +1280,7 @@ function seedFeed(){
   setTimeout(renderSocialFeed,1200);
 }
 function startFeedSimulation(){
-  const LIVE_EVENTS=['🔍 VAR review underway...','⚽ GOAL! The crowd erupts!','🟨 Yellow card shown!','🚩 Corner kick awarded','🔥 Shot on target!','💥 Free kick — dangerous position!','🏃 Counter attack!','🧤 Great save by the keeper!'];
+  const LIVE_EVENTS=['🔍 VAR review underway...','⚽ GOAL! The crowd erupts!','🟨 Yellow card shown!','🚩 Corner kick awarded','🔥 Shot on target!','💥 Free kick — dangerous position!','🏃 Counter attack!','🧤 Great save by the keeper!','🏃 Fast break!','📣 The crowd is electric!'];
   setInterval(()=>{
     const liveMarkets=allMarkets.filter(m=>!m.settled&&Number(m.closesAt)>Date.now()/1000);
     const q=liveMarkets.length>0
