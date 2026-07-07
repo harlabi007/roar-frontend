@@ -501,7 +501,7 @@ const marketsById=new Map();
 
 const CONTRACT_POLL_MS=15000;
 const SCORE_POLL_MS=10000;
-const SPORTS_DB='https://www.thesportsdb.com/api/v1/json/3';
+const SPORTS_DB='https://www.thesportsdb.com/api/v1/json/3'; // free tier
 
 let pollTimeout=null;
 let scorePollInterval=null;
@@ -556,7 +556,7 @@ function startCountdownBar(){
 
 async function fetchLiveScores(){
   try{
-    const res=await fetch(SPORTS_DB+'/eventslive.php',{signal:AbortSignal.timeout(5000)});
+    const res=await fetch('https://www.thesportsdb.com/api/v1/json/60878423/eventslive.php',{signal:AbortSignal.timeout(5000)});
     const data=await res.json();
     if(data&&data.events&&data.events.length>0){
       data.events.forEach(ev=>{
