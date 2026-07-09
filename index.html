@@ -880,18 +880,20 @@ function renderMarkets(){
   else{
     if(openMarkets.length>0){filtered=openMarkets;sectionLabel='🔴 LIVE MARKETS';}
   }
+  // Always append upcoming markets (closesAt > 1 hour from now = upcoming fixture)
+  const now2=Date.now()/1000;
+  const upcomingMarkets=nonCancelled.filter(m=>!m.settled&&Number(m.closesAt)>now2+3600&&!filtered.find(f=>String(f.id)===String(m.id)));
+  if(upcomingMarkets.length>0&&currentFilter==='auto'){
+    filtered=[...filtered,...upcomingMarkets];
+  }
   if(filtered.length===0){
     c.innerHTML=`<div class="empty-state">
       <div style="font-size:3rem;margin-bottom:1rem;">⏸</div>
       <h3>No Live Matches Right Now</h3>
       <p style="color:var(--muted);font-size:13px;line-height:1.8;max-width:360px;margin:0 auto 1.5rem;">
-        Markets open automatically when World Cup 2026 matches kick off.<br>
-        Check the <strong style="color:var(--accent);">match schedule</strong> and come back at kick-off time!
+        Markets open automatically when matches kick off.<br>
+        Upcoming fixture markets are shown below — bet before kick-off!
       </p>
-      <a href="https://www.fifa.com/en/tournaments/mens/worldcup/canada-mexico-usa-2026/match-centre" target="_blank"
-        style="display:inline-block;background:var(--accent);color:#000;font-weight:700;padding:0.7rem 1.5rem;border-radius:8px;text-decoration:none;font-size:13px;margin-bottom:1rem;">
-        📅 View FIFA Match Schedule
-      </a><br>
       <button class="refresh-btn" onclick="if(contract){loadMarketsFromChain();}else{renderMarkets();}">🔄 Check Again</button>
     </div>`;
     return;
